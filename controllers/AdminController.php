@@ -16,23 +16,30 @@ class AdminController {
         }
     }
 
+    private function requirePost(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            exit('Méthode non autorisée.');
+        }
+        verifyCsrfToken();
+    }
+
     public function bloquerCitoyen($id) {
+        $this->requirePost();
         $this->model->updateCitoyenEtat((int) $id, 'bloque');
         header('Location: index.php?action=liste_citoyens');
         exit();
     }
 
     public function debloquerCitoyen($id) {
+        $this->requirePost();
         $this->model->updateCitoyenEtat((int) $id, 'actif');
         header('Location: index.php?action=liste_citoyens');
         exit();
     }
 
     public function getStats() {
-        $stats = [
-            'total' => $this->model->countTotal(),
-            'attente' => $this->model->countByStatut('En attente')
-        ];
+        $stats = ['total' => $this->model->countTotal(), 'attente' => $this->model->countByStatut('En attente')];
         $reclamations = getAllReclamations();
         $equipes = $this->model->getAllChefsEquipe();
         require_once 'views/dashboard_admin.php';
@@ -66,7 +73,6 @@ class AdminController {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $specialite = trim($_POST['specialite'] ?? '');
-
         if ($nom === '' || $prenom === '' || $matricule === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $specialite === '') {
             http_response_code(400);
             exit('Données invalides.');
@@ -78,6 +84,7 @@ class AdminController {
     }
 
     public function supprimerChefEquipeAction($id) {
+        $this->requirePost();
         $this->model->supprimerChefEquipe((int) $id);
         header('Location: index.php?action=gestion_equipe');
         exit();
