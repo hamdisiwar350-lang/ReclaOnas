@@ -77,11 +77,6 @@ class AdminController {
     }
 
     public function supprimerChefEquipeAction($id) {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            exit('Méthode non autorisée.');
-        }
-
         $this->model->supprimerChefEquipe((int) $id);
         header('Location: index.php?action=gestion_equipe');
         exit();
