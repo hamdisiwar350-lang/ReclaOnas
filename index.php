@@ -49,8 +49,8 @@ elseif ($action === 'store_chef_equipe') (new AdminController())->ajouterChefEqu
 elseif ($action === 'supprimer_chef_equipe') (new AdminController())->supprimerChefEquipeAction(postInt('id') ?? 0);
 elseif ($action === 'afficher') afficherListe();
 elseif ($action === 'ajouter') gererAjout();
-elseif ($action === 'modifier') modifierReclamationForm((int)($_GET['id'] ?? 0));
-elseif ($action === 'update') updateReclamationAction((int)($_GET['id'] ?? 0));
+elseif ($action === 'modifier') modifierReclamationForm(queryInt('id') ?? 0);
+elseif ($action === 'update') updateReclamationAction(queryInt('id') ?? 0);
 elseif ($action === 'supprimer') supprimerReclamationAction(postInt('id') ?? 0);
 elseif ($action === 'dashboard_citoyen') {
     if (!isset($_SESSION['id_citoyen']) || ($_SESSION['role'] ?? '') !== 'citoyen') { header("Location: index.php?action=login_citoyen"); exit(); }

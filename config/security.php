@@ -12,6 +12,14 @@ function postInt(string $key): ?int {
     return (int) $value;
 }
 
+function queryInt(string $key): ?int {
+    $value = $_GET[$key] ?? null;
+    if (!is_string($value) || filter_var($value, FILTER_VALIDATE_INT) === false) {
+        return null;
+    }
+    return (int) $value;
+}
+
 function csrfToken(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
