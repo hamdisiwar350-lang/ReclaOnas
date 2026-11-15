@@ -73,7 +73,7 @@ class AdminController {
         $email = trim(postString('email') ?? '');
         $password = postString('password') ?? '';
         $specialite = trim(postString('specialite') ?? '');
-        if ($nom === '' || $prenom === '' || $matricule === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $specialite === '') {
+        if ($nom === '' || strlen($nom) > 100 || $prenom === '' || strlen($prenom) > 100 || $matricule === '' || strlen($matricule) > 50 || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254 || strlen($password) < 8 || $specialite === '' || strlen($specialite) > 150) {
             http_response_code(400);
             exit('Données invalides.');
         }

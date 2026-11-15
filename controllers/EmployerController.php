@@ -110,7 +110,7 @@ function marquerTermineeAction() {
 
     $id_reclamation = filter_input(INPUT_POST, 'id_reclamation', FILTER_VALIDATE_INT);
     $rapport = trim(postString('rapport') ?? '');
-    if (!$id_reclamation || $rapport === '' || !reclamationEstAssigneeEquipe($id_reclamation, (int) $_SESSION['id_employer'])) {
+    if (!$id_reclamation || $rapport === '' || strlen($rapport) > 5000 || !reclamationEstAssigneeEquipe($id_reclamation, (int) $_SESSION['id_employer'])) {
         http_response_code(403);
         exit('Accès refusé.');
     }

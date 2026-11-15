@@ -16,7 +16,7 @@ function gererAjout() {
         verifyCsrfToken();
         $typesAutorises = ['Bouchon sur réseau', 'Bouchon sur branchement et retour des eaux', 'Affaissement, casse du réseau', 'Odeurs', 'Débordements d\'eau usées', 'Autres'];
         $type = trim(postString('type_probleme') ?? ''); $repere = trim(postString('repere') ?? ''); $latitude = trim(postString('latitude') ?? ''); $longitude = trim(postString('longitude') ?? '');
-        if (!in_array($type, $typesAutorises, true) || $repere === '' || !is_numeric($latitude) || !is_numeric($longitude) || abs((float)$latitude) > 90 || abs((float)$longitude) > 180) { http_response_code(400); exit('Données de réclamation invalides.'); }
+        if (!in_array($type, $typesAutorises, true) || $repere === '' || strlen($repere) > 500 || !is_numeric($latitude) || !is_numeric($longitude) || abs((float)$latitude) > 90 || abs((float)$longitude) > 180) { http_response_code(400); exit('Données de réclamation invalides.'); }
         $urgences = ['Odeurs', 'Débordements d\'eau usées', 'Affaissement, casse du réseau', 'Bouchon sur branchement et retour des eaux'];
         $priorite = in_array($type, $urgences, true) ? 'Urgente' : 'Normale'; $photo_path = null; $photoBase64 = postString('photo_base64') ?? '';
         if ($photoBase64 !== '') {
@@ -44,7 +44,8 @@ function modifierReclamationForm(int $id) {
 
 function updateReclamationAction(int $id) {
     requireAdminReclamationAccess(); if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Méthode non autorisée.'); } verifyCsrfToken();
-    $type = trim(postString('type') ?? ''); $repere = trim(postString('repere') ?? ''); if ($type === '' || $repere === '') { http_response_code(400); exit('Données invalides.'); }
+    $typesAutorises = ['Bouchon sur réseau', 'Bouchon sur branchement et retour des eaux', 'Affaissement, casse du réseau', 'Odeurs', 'Débordements d\'eau usées', 'Autres'];
+    $type = trim(postString('type') ?? ''); $repere = trim(postString('repere') ?? ''); if (!in_array($type, $typesAutorises, true) || $repere === '' || strlen($repere) > 500) { http_response_code(400); exit('Données invalides.'); }
     updateReclamation($id, $type, $repere); header("Location: index.php?action=dashboard_admin"); exit;
 }
 

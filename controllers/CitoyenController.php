@@ -16,7 +16,7 @@ class CitoyenController {
             $telephone = trim(postString('telephone') ?? '');
             $password = postString('password') ?? '';
 
-            if (!preg_match('/^\d{8}$/', $cin) || $nom_prenom === '' || !preg_match('/^[0-9+()\s-]{8,20}$/', $telephone) || strlen($password) < 8) {
+            if (!preg_match('/^\d{8}$/', $cin) || $nom_prenom === '' || strlen($nom_prenom) > 150 || !preg_match('/^[0-9+()\s-]{8,20}$/', $telephone) || strlen($password) < 8) {
                 $erreur = "Veuillez vérifier les informations saisies. Le mot de passe doit contenir au moins 8 caractères.";
                 require_once 'views/inscription_citoyen.php';
                 return;
