@@ -1,88 +1,88 @@
 <?php
-// استدعاء الموديل مباشرة، بدون تعقيدات
 require_once __DIR__ . '/../models/AdminModel.php';
 
 class AdminController {
-
     private $model;
 
     public function __construct() {
         $this->model = new AdminModel();
+        $this->requireAdmin();
     }
 
-    // 1. الفونكسيون باش نبلوكيو مواطن
-   // بلوكاج مواطن
+    private function requireAdmin(): void {
+        if (!isset($_SESSION['id_employer']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            header('Location: index.php?action=login_employer');
+            exit();
+        }
+    }
+
     public function bloquerCitoyen($id) {
-        $this->model->updateCitoyenEtat($id, 'bloque');
+        $this->model->updateCitoyenEtat((int) $id, 'bloque');
         header('Location: index.php?action=liste_citoyens');
         exit();
     }
 
-    // ديبلوكاج مواطن
     public function debloquerCitoyen($id) {
-        $this->model->updateCitoyenEtat($id, 'actif');
+        $this->model->updateCitoyenEtat((int) $id, 'actif');
         header('Location: index.php?action=liste_citoyens');
         exit();
     }
 
-    // 2. الفونكسيون باش نجيبو الإحصائيات
     public function getStats() {
         $stats = [
             'total' => $this->model->countTotal(),
             'attente' => $this->model->countByStatut('En attente')
         ];
+        $reclamations = getAllReclamations();
+        $equipes = $this->model->getAllChefsEquipe();
         require_once 'views/dashboard_admin.php';
     }
+
     public function showList() {
-    // نعيطو للموديل يجيب ليستة المواطنين
-        $citoyens = $this->model->getAllCitoyens(); 
+        $citoyens = $this->model->getAllCitoyens();
         require_once 'views/gestion_utilisateurs.php';
     }
-    // زيدي الفونكسيون هذي داخل class AdminController في ملف controllers/AdminController.php
-     function afficherListeCitoyens() {
-           $citoyens = $this->model->getAllCitoyens();
-           require_once 'views/gestion_utilisateurs.php';
+
+    public function afficherListeCitoyens() {
+        $citoyens = $this->model->getAllCitoyens();
+        require_once 'views/gestion_utilisateurs.php';
     }
-    // عرض صفحة إدارة رؤساء الفرق مع القائمة
-    
 
     public function afficherGestionEquipe() {
-        // 1. نتأكدو اللي هو مكنكتي وعندو الحق (Admin)
-        if (!isset($_SESSION['id_employer']) || $_SESSION['role'] !== 'admin') {
-            header("Location: index.php"); 
+        $equipes = $this->model->getAllChefsEquipe();
+        require_once 'views/gestion_equipe.php';
+    }
+
+    public function ajouterChefEquipeAction() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?action=gestion_equipe');
             exit();
         }
 
-        // 2. نجيبو ليستة الفرق ونحطوها في $equipes باش تطابق الـ View
-        $equipes = $this->model->getAllChefsEquipe();
-        
-        // 3. نعديوهم للـ View
-        require_once 'views/gestion_equipe.php';
-    }    function ajouterChefEquipeAction() {
-    // 1. نلمو المعلومات اللي جاتنا مالفورميلار
-    // دمجنا الإسم واللقب في متغير واحد خاطر في القاعدة عندنا كان عمود 'nom'
-    $nom_complet = $_POST['nom'] . ' ' . $_POST['prenom']; 
-    
-    $matricule = $_POST['matricule'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $specialite = $_POST['specialite'];
-    
-    // 2. نبعثو البيانات للـ Model باش يصبهم في قاعدة البيانات
-    $this->model->ajouterChefEquipe($matricule, $nom_complet, $email, $password, $specialite);
-    
-    // 3. نرجعو لصفحة إدارة الفرق ونعديو ميساج نجاح
-    header("Location: index.php?action=gestion_equipe&msg=Chef d'équipe ajouté avec succès");
-    exit();
-    
+        $nom = trim($_POST['nom'] ?? '');
+        $prenom = trim($_POST['prenom'] ?? '');
+        $matricule = trim($_POST['matricule'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $specialite = trim($_POST['specialite'] ?? '');
+
+        if ($nom === '' || $prenom === '' || $matricule === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $specialite === '') {
+            http_response_code(400);
+            exit('Données invalides.');
+        }
+
+        $this->model->ajouterChefEquipe($matricule, "$nom $prenom", $email, $password, $specialite);
+        header("Location: index.php?action=gestion_equipe&msg=" . rawurlencode("Chef d'équipe ajouté avec succès"));
+        exit();
     }
 
-    // معالجة حذف رئيس فريق
     public function supprimerChefEquipeAction($id) {
-        // نحي الـ echo وخلّي الخدمة تمشي ديريكت
-        $this->model->supprimerChefEquipe($id);
-        
-        // إعادة التوجيه لصفحة إدارة الفرق
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            exit('Méthode non autorisée.');
+        }
+
+        $this->model->supprimerChefEquipe((int) $id);
         header('Location: index.php?action=gestion_equipe');
         exit();
     }
