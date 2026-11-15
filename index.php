@@ -3,6 +3,7 @@ require_once __DIR__ . '/config/security.php';
 
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');
+ini_set('session.use_trans_sid', '0');
 session_set_cookie_params([
     'httponly' => true,
     'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
@@ -11,6 +12,7 @@ session_set_cookie_params([
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Permissions-Policy: camera=(self), geolocation=(self)');
 session_start();
 
 require_once 'controllers/ReclamationController.php';
