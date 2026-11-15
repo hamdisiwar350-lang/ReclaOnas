@@ -114,11 +114,6 @@ function updateReclamationAction(int $id) {
 
 function supprimerReclamationAction(int $id) {
     requireAdminReclamationAccess();
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405);
-        exit('Méthode non autorisée.');
-    }
-
     supprimerReclamation($id);
     header("Location: index.php?action=dashboard_admin");
     exit;
