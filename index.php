@@ -42,16 +42,16 @@ elseif ($action === 'affecter') affecterAction();
 elseif ($action === 'marquer_terminee') marquerTermineeAction();
 elseif ($action === 'stats') (new AdminController())->getStats();
 elseif ($action === 'liste_citoyens') (new AdminController())->afficherListeCitoyens();
-elseif ($action === 'bloquer') (new AdminController())->bloquerCitoyen((int)($_POST['id'] ?? 0));
-elseif ($action === 'debloquer') (new AdminController())->debloquerCitoyen((int)($_POST['id'] ?? 0));
+elseif ($action === 'bloquer') (new AdminController())->bloquerCitoyen(postInt('id') ?? 0);
+elseif ($action === 'debloquer') (new AdminController())->debloquerCitoyen(postInt('id') ?? 0);
 elseif ($action === 'gestion_equipe') (new AdminController())->afficherGestionEquipe();
 elseif ($action === 'store_chef_equipe') (new AdminController())->ajouterChefEquipeAction();
-elseif ($action === 'supprimer_chef_equipe') (new AdminController())->supprimerChefEquipeAction((int)($_POST['id'] ?? 0));
+elseif ($action === 'supprimer_chef_equipe') (new AdminController())->supprimerChefEquipeAction(postInt('id') ?? 0);
 elseif ($action === 'afficher') afficherListe();
 elseif ($action === 'ajouter') gererAjout();
 elseif ($action === 'modifier') modifierReclamationForm((int)($_GET['id'] ?? 0));
 elseif ($action === 'update') updateReclamationAction((int)($_GET['id'] ?? 0));
-elseif ($action === 'supprimer') supprimerReclamationAction((int)($_POST['id'] ?? 0));
+elseif ($action === 'supprimer') supprimerReclamationAction(postInt('id') ?? 0);
 elseif ($action === 'dashboard_citoyen') {
     if (!isset($_SESSION['id_citoyen']) || ($_SESSION['role'] ?? '') !== 'citoyen') { header("Location: index.php?action=login_citoyen"); exit(); }
     require_once 'views/dashboard_citoyen.php';
