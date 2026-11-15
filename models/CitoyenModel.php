@@ -1,26 +1,29 @@
 <?php
-class CitoyenModel {
-    public function ajouterCitoyen($cin, $nom_prenom, $telephone, $password) {
-        $pdo = getPdoConnection();
+require_once __DIR__ . '/../config/database.php';
 
-        $stmt_check = $pdo->prepare("SELECT cin FROM citoyen WHERE cin = ?");
+class CitoyenModel {
+    public function ajouterCitoyen(string $cin, string $nom_prenom, string $telephone, string $password): bool {
+        $pdo = getPdoConnection();
+        $stmt_check = $pdo->prepare('SELECT 1 FROM citoyen WHERE cin = ? LIMIT 1');
         $stmt_check->execute([$cin]);
-        if ($stmt_check->fetch()) {
+        if ($stmt_check->fetchColumn()) {
             return false;
         }
 
-        $sql = "INSERT INTO citoyen (cin, nom_prenom, telephone, password, etat) VALUES (?, ?, ?, ?, 'actif')";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$cin, $nom_prenom, $telephone, password_hash($password, PASSWORD_DEFAULT)]);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        if ($hash === false) {
+            throw new RuntimeException('Impossible de sécuriser le mot de passe.');
+        }
 
-        return true;
+        $stmt = $pdo->prepare("INSERT INTO citoyen (cin, nom_prenom, telephone, password, etat) VALUES (?, ?, ?, ?, 'actif')");
+        return $stmt->execute([$cin, $nom_prenom, $telephone, $hash]);
     }
 
-    public function getCitoyenByCin($cin) {
-        $pdo = getPdoConnection();
-        $stmt = $pdo->prepare("SELECT * FROM citoyen WHERE cin = ?");
+    public function getCitoyenByCin(string $cin): ?array {
+        $stmt = getPdoConnection()->prepare('SELECT * FROM citoyen WHERE cin = ? LIMIT 1');
         $stmt->execute([$cin]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $citoyen = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $citoyen ?: null;
     }
 }
 ?>
