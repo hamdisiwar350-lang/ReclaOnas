@@ -38,9 +38,9 @@
                         <td>
                             <?php if (!empty($recla['photo'])): ?><img src="<?= htmlspecialchars($recla['photo'], ENT_QUOTES, 'UTF-8') ?>" alt="Photo" class="table-img"><?php else: ?><span style="color: #999; font-size: 12px;">Pas de photo</span><?php endif; ?>
                         </td>
-                        <td><span class="<?= ($recla['statut'] === 'Terminée') ? 'badge-terminee' : 'badge-en-cours' ?>"><?= htmlspecialchars($recla['statut'] ?? '', ENT_QUOTES, 'UTF-8') ?></span></td>
+                        <td><span class="<?= in_array($recla['statut'] ?? '', ['Terminée', 'Traité'], true) ? 'badge-terminee' : 'badge-en-cours' ?>"><?= htmlspecialchars($recla['statut'] ?? '', ENT_QUOTES, 'UTF-8') ?></span></td>
                         <td>
-                            <?php if (($recla['statut'] ?? '') !== 'Terminée'): ?>
+                            <?php if (!in_array($recla['statut'] ?? '', ['Terminée', 'Traité'], true)): ?>
                                 <form action="index.php?action=marquer_terminee" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 6px;">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="id_reclamation" value="<?= (int) $recla['id_reclamation'] ?>">

@@ -46,22 +46,13 @@
                 .catch((err) => console.log('Service Worker Failed', err));
         }
 
-        // 2. طلب إذن الإشعارات من المواطن أول ما يحل الباج
-        if ('Notification' in window && 'serviceWorker' in navigator) {
-            Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                    console.log('✅ الإشعارات مفعلة جوها باهي');
-                }
-            });
-        }
-
-        // 3. دالة إظهار الإشعار (باش نستعملوها وقت تتصلح شكاية)
+        // Les notifications sont déclenchées uniquement après une action utilisateur.
         function showNotification(titre, message) {
-            if (Notification.permission === 'granted') {
+            if ('Notification' in window && Notification.permission === 'granted') {
                 navigator.serviceWorker.ready.then(function(registration) {
                     registration.showNotification(titre, {
                         body: message,
-                        icon: 'assets/icon-192.png', // تأكد من مسار اللوغو كان عندك تصويرة
+                        icon: 'assets/logobas.gif',
                         vibrate: [200, 100, 200]
                     });
                 });

@@ -2,7 +2,6 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open('onas-store').then((cache) => {
       return cache.addAll([
-        'index.php',
         'style.css'
       ]);
     })
