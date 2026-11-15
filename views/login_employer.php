@@ -50,7 +50,7 @@
                         
                         <?php if (isset($erreur)): ?>
                             <div class="alert alert-danger text-center" role="alert">
-                                <?php echo htmlspecialchars($erreur); ?>
+                                <?php echo htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8'); ?>
                             </div>
                         <?php endif; ?>
 

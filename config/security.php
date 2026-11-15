@@ -1,4 +1,9 @@
 <?php
+function postString(string $key): ?string {
+    $value = $_POST[$key] ?? null;
+    return is_string($value) ? $value : null;
+}
+
 function csrfToken(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

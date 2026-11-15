@@ -67,12 +67,12 @@ class AdminController {
         }
         verifyCsrfToken();
 
-        $nom = trim($_POST['nom'] ?? '');
-        $prenom = trim($_POST['prenom'] ?? '');
-        $matricule = trim($_POST['matricule'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $specialite = trim($_POST['specialite'] ?? '');
+        $nom = trim(postString('nom') ?? '');
+        $prenom = trim(postString('prenom') ?? '');
+        $matricule = trim(postString('matricule') ?? '');
+        $email = trim(postString('email') ?? '');
+        $password = postString('password') ?? '';
+        $specialite = trim(postString('specialite') ?? '');
         if ($nom === '' || $prenom === '' || $matricule === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $specialite === '') {
             http_response_code(400);
             exit('Données invalides.');

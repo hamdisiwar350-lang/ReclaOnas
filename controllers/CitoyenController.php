@@ -11,10 +11,10 @@ class CitoyenController {
     public function inscriptionAction() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verifyCsrfToken();
-            $cin = trim($_POST['cin'] ?? '');
-            $nom_prenom = trim($_POST['nom_prenom'] ?? '');
-            $telephone = trim($_POST['telephone'] ?? '');
-            $password = $_POST['password'] ?? '';
+            $cin = trim(postString('cin') ?? '');
+            $nom_prenom = trim(postString('nom_prenom') ?? '');
+            $telephone = trim(postString('telephone') ?? '');
+            $password = postString('password') ?? '';
 
             if (!preg_match('/^\d{8}$/', $cin) || $nom_prenom === '' || !preg_match('/^[0-9+()\s-]{8,20}$/', $telephone) || strlen($password) < 8) {
                 $erreur = "Veuillez vérifier les informations saisies. Le mot de passe doit contenir au moins 8 caractères.";
@@ -39,8 +39,8 @@ class CitoyenController {
     public function loginAction() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verifyCsrfToken();
-            $cin = trim($_POST['cin'] ?? '');
-            $password = $_POST['password'] ?? '';
+            $cin = trim(postString('cin') ?? '');
+            $password = postString('password') ?? '';
             $citoyen = $this->model->getCitoyenByCin($cin);
 
             if ($citoyen && ($citoyen['etat'] ?? 'actif') !== 'bloque' && password_verify($password, $citoyen['password'])) {

@@ -20,7 +20,7 @@ function updateStatutAction() {
     verifyCsrfToken();
 
     $id_reclamation = filter_input(INPUT_POST, 'id_reclamation', FILTER_VALIDATE_INT);
-    $nouveau_statut = trim($_POST['nouveau_statut'] ?? '');
+    $nouveau_statut = trim(postString('nouveau_statut') ?? '');
     $statutsAutorises = ['En attente', 'En cours', 'Terminée', 'Traité'];
     if (!$id_reclamation || !in_array($nouveau_statut, $statutsAutorises, true)) {
         header("Location: index.php?action=dashboard_employer");
@@ -43,8 +43,8 @@ function loginEmployerAction() {
     }
     verifyCsrfToken();
 
-    $matricule = trim($_POST['matricule'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $matricule = trim(postString('matricule') ?? '');
+    $password = postString('password') ?? '';
     $employer = getEmployerByMatricule($matricule);
     if ($employer && password_verify($password, $employer['password']) && in_array(strtolower($employer['role']), ['admin', 'equipe'], true)) {
         session_regenerate_id(true);
@@ -109,7 +109,7 @@ function marquerTermineeAction() {
     verifyCsrfToken();
 
     $id_reclamation = filter_input(INPUT_POST, 'id_reclamation', FILTER_VALIDATE_INT);
-    $rapport = trim($_POST['rapport'] ?? '');
+    $rapport = trim(postString('rapport') ?? '');
     if (!$id_reclamation || $rapport === '' || !reclamationEstAssigneeEquipe($id_reclamation, (int) $_SESSION['id_employer'])) {
         http_response_code(403);
         exit('Accès refusé.');
