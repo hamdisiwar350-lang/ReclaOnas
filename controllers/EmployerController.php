@@ -116,8 +116,13 @@ function marquerTermineeAction() {
     }
 
     $photo_intervention = null;
-    if (isset($_FILES['photo_intervention']) && $_FILES['photo_intervention']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $file = $_FILES['photo_intervention'];
+    $uploadedFile = $_FILES['photo_intervention'] ?? null;
+    if ($uploadedFile !== null && (!is_array($uploadedFile) || !array_key_exists('error', $uploadedFile))) {
+        http_response_code(400);
+        exit('Fichier invalide.');
+    }
+    if ($uploadedFile !== null && $uploadedFile['error'] !== UPLOAD_ERR_NO_FILE) {
+        $file = $uploadedFile;
         $allowedMimeTypes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $maxSize = 5 * 1024 * 1024;
         $validUpload = is_array($file)
