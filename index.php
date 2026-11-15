@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// 1. Imports (عيطنا للملفات مرة وحدة برك بصفة منظمة)
 require_once 'controllers/ReclamationController.php';
 require_once 'controllers/CitoyenController.php';
 require_once 'controllers/EmployerController.php';
@@ -17,7 +16,6 @@ if ($action === 'accueil') {
     require_once 'views/accueil.php';
 }
 
-// --- (Citoyen - باللوجيك الجديد متع الـ CIN) ---
 elseif ($action === 'inscription_citoyen') {
     $citoyen = new CitoyenController();
     $citoyen->inscriptionAction();
@@ -27,24 +25,19 @@ elseif ($action === 'login_citoyen') {
     $citoyen->loginAction();
 } 
 elseif ($action === 'logout') {
-    // تفريغ وتدمير الجلسة للخروج
     session_unset();
     session_destroy();
     header("Location: index.php?action=accueil");
     exit();
 }
 
-// --- (Admin & Equipe - الدخول والـ Dashboard) ---
 elseif ($action === 'login_employer') {
-    // هذي تعرض الصفحة
     loginEmployerForm();
 } 
 elseif ($action === 'auth_employer') {
-    // هذي تخدم الـ Login وتتأكد من المودباس
     loginEmployerAction();
 }
 elseif ($action === 'dashboard_admin') {
-    // هذي الفونكسيون هي اللي تتكفل وتفرق بين Admin و Equipe حسب الـ Session
     afficherDashboardEmployer();
 }
 elseif ($action === 'dashboard_employer') {
@@ -70,7 +63,6 @@ elseif ($action === 'liste_citoyens') {
     $admin = new AdminController();
     $admin->afficherListeCitoyens();
 }
-// بلوكاج مواطن
 elseif ($action === 'bloquer') {
     $admin = new AdminController();
     $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -125,7 +117,6 @@ elseif ($action === 'dashboard_citoyen') {
     require_once 'views/dashboard_citoyen.php';
 }
 
-// --- (Fallback - أي حاجة غالطة يرجع للرئيسية) ---
 else {
     header("Location: index.php?action=accueil");
     exit();
