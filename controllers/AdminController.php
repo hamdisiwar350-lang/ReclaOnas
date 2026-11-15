@@ -78,7 +78,10 @@ class AdminController {
             exit('Données invalides.');
         }
 
-        $this->model->ajouterChefEquipe($matricule, "$nom $prenom", $email, $password, $specialite);
+        if (!$this->model->ajouterChefEquipe($matricule, "$nom $prenom", $email, $password, $specialite)) {
+            http_response_code(409);
+            exit('Impossible de créer cette équipe.');
+        }
         header("Location: index.php?action=gestion_equipe&msg=" . rawurlencode("Chef d'équipe ajouté avec succès"));
         exit();
     }

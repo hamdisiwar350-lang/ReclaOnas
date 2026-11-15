@@ -32,7 +32,11 @@ class AdminModel {
     public function ajouterChefEquipe(string $matricule, string $nom, string $email, string $password, string $specialite): bool {
         $sql = "INSERT INTO employer_onas (matricule, nom, email, password, specialite, role) VALUES (?, ?, ?, ?, ?, 'equipe')";
         $stmt = getPdoConnection()->prepare($sql);
-        return $stmt->execute([$matricule, $nom, $email, password_hash($password, PASSWORD_DEFAULT), $specialite]);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        if ($hash === false) {
+            throw new RuntimeException('Impossible de sécuriser le mot de passe.');
+        }
+        return $stmt->execute([$matricule, $nom, $email, $hash, $specialite]);
     }
 
     public function supprimerChefEquipe(int $id): bool {
