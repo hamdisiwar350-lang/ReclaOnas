@@ -10,19 +10,19 @@ class CitoyenController {
 
     public function inscriptionAction() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            verifyCsrfToken();
             $cin = trim($_POST['cin'] ?? '');
             $nom_prenom = trim($_POST['nom_prenom'] ?? '');
             $telephone = trim($_POST['telephone'] ?? '');
             $password = $_POST['password'] ?? '';
 
-            if (!preg_match('/^\d{8}$/', $cin) || $nom_prenom === '' || $telephone === '' || strlen($password) < 8) {
+            if (!preg_match('/^\d{8}$/', $cin) || $nom_prenom === '' || !preg_match('/^[0-9+()\s-]{8,20}$/', $telephone) || strlen($password) < 8) {
                 $erreur = "Veuillez vérifier les informations saisies. Le mot de passe doit contenir au moins 8 caractères.";
                 require_once 'views/inscription_citoyen.php';
                 return;
             }
 
             $result = $this->model->ajouterCitoyen($cin, $nom_prenom, $telephone, $password);
-
             if ($result) {
                 header("Location: index.php?action=login_citoyen&success=1");
                 exit();
@@ -47,14 +47,11 @@ class CitoyenController {
                 $_SESSION['id_citoyen'] = $citoyen['id_citoyen'];
                 $_SESSION['nom_prenom'] = $citoyen['nom_prenom'];
                 $_SESSION['role'] = 'citoyen';
-
                 header("Location: index.php?action=dashboard_citoyen");
                 exit();
             }
 
-            $erreur = ($citoyen && ($citoyen['etat'] ?? '') === 'bloque')
-                ? "Votre compte est bloqué."
-                : "Numéro de CIN ou mot de passe incorrect.";
+            $erreur = ($citoyen && ($citoyen['etat'] ?? '') === 'bloque') ? "Votre compte est bloqué." : "Numéro de CIN ou mot de passe incorrect.";
             require_once 'views/login_citoyen.php';
             return;
         }
