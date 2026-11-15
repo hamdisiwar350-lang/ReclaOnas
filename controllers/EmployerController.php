@@ -133,7 +133,10 @@ function marquerTermineeAction() {
         $mime = $validUpload && $file['error'] === UPLOAD_ERR_OK
             ? (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name'])
             : false;
-        if (!$validUpload || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > $maxSize || !isset($allowedMimeTypes[$mime])) {
+        $imageInfo = $validUpload && $file['error'] === UPLOAD_ERR_OK
+            ? @getimagesize($file['tmp_name'])
+            : false;
+        if (!$validUpload || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > $maxSize || !isset($allowedMimeTypes[$mime]) || $imageInfo === false || $imageInfo[0] > 10000 || $imageInfo[1] > 10000) {
             http_response_code(400);
             exit('Fichier invalide.');
         }

@@ -22,7 +22,8 @@ function gererAjout() {
         if ($photoBase64 !== '') {
             if (!preg_match('#^data:image/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$#', $photoBase64, $matches)) { http_response_code(400); exit('Image invalide.'); }
             $imageData = base64_decode($matches[2], true);
-            if ($imageData === false || strlen($imageData) > 5 * 1024 * 1024 || @getimagesizefromstring($imageData) === false) { http_response_code(400); exit('Image invalide ou trop volumineuse.'); }
+            $imageInfo = $imageData === false ? false : @getimagesizefromstring($imageData);
+            if ($imageData === false || strlen($imageData) > 5 * 1024 * 1024 || $imageInfo === false || $imageInfo[0] > 10000 || $imageInfo[1] > 10000) { http_response_code(400); exit('Image invalide ou trop volumineuse.'); }
             $dossier_upload = __DIR__ . '/../uploads/';
             if (!is_dir($dossier_upload) && !mkdir($dossier_upload, 0755, true)) { http_response_code(500); exit('Impossible de préparer le stockage.'); }
             $extension = $matches[1] === 'jpeg' ? 'jpg' : $matches[1]; $nom_fichier = bin2hex(random_bytes(16)) . '.' . $extension;
