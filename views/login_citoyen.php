@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#198754">
+    <meta charset="UTF-8">
+    <title>Connexion Citoyen - ONAS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <div class="text-center mb-4">
+            <h4 class="text-success">Espace Citoyen</h4>
+            <p class="text-muted">Connectez-vous pour suivre vos réclamations</p>
+        </div>
+
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success text-center">Compte créé avec succès ! Connectez-vous.</div>
+        <?php endif; ?>
+
+        <?php if (isset($erreur)): ?>
+            <div class="alert alert-danger text-center"><?= $erreur ?></div>
+        <?php endif; ?>
+
+        <form action="index.php?action=login_citoyen" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Numéro de CIN</label>
+                <input type="text" name="cin" class="form-control" maxlength="8" required placeholder="Ex: 01234567">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Se connecter</button>
+        </form>
+        <div class="text-center mt-3">
+            <a href="index.php?action=inscription_citoyen" class="text-decoration-none">Créer un nouveau compte</a>
+        </div>
+    </div>
+    <script>
+       if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw.js')
+             .then(() => console.log('Service Worker Registered Success'))
+             .catch((err) => console.log('Service Worker Failed', err));
+        }
+     </script>
+</body>
+</html>

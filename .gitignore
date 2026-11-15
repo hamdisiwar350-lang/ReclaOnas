@@ -1,0 +1,4 @@
+/config/credentials.php
+/uploads/*
+!/uploads/.gitkeep
+.env
