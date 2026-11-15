@@ -28,7 +28,7 @@ class CitoyenController {
                 exit();
             }
 
-            $erreur = "Ce numéro de CIN est déjà inscrit.";
+            $erreur = "Impossible de créer le compte. Vérifiez les informations saisies ou réessayez.";
             require_once 'views/inscription_citoyen.php';
             return;
         }
