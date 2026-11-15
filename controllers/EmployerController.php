@@ -120,8 +120,15 @@ function marquerTermineeAction() {
         $file = $_FILES['photo_intervention'];
         $allowedMimeTypes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $maxSize = 5 * 1024 * 1024;
-        $mime = $file['error'] === UPLOAD_ERR_OK ? (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']) : false;
-        if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > $maxSize || !isset($allowedMimeTypes[$mime])) {
+        $validUpload = is_array($file)
+            && isset($file['error'], $file['size'], $file['tmp_name'])
+            && is_int($file['error'])
+            && is_int($file['size'])
+            && is_string($file['tmp_name']);
+        $mime = $validUpload && $file['error'] === UPLOAD_ERR_OK
+            ? (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name'])
+            : false;
+        if (!$validUpload || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > $maxSize || !isset($allowedMimeTypes[$mime])) {
             http_response_code(400);
             exit('Fichier invalide.');
         }
