@@ -18,7 +18,7 @@
 <div class="container" style="max-width: 1100px; margin: 30px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
     <div class="header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>🛠️ Espace Équipe Technique - Les Tâches</h2>
-        <div><span style="margin-right: 15px; font-weight: bold; color: #555;">Bonjour, <?= htmlspecialchars($_SESSION['nom'] ?? 'Équipe', ENT_QUOTES, 'UTF-8') ?></span><a href="index.php?action=logout" style="background: #dc3545; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 14px;">Déconnexion</a></div>
+        <div><span style="margin-right: 15px; font-weight: bold; color: #555;">Bonjour, <?= htmlspecialchars($_SESSION['nom'] ?? 'Équipe', ENT_QUOTES, 'UTF-8') ?></span><form action="index.php?action=logout" method="POST" style="display:inline"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>"><button type="submit" style="background: #dc3545; color: white; padding: 8px 12px; border: 0; border-radius: 4px; font-size: 14px;">Déconnexion</button></form></div>
     </div>
 
     <table style="width: 100%; border-collapse: collapse;" border="1" cellpadding="10">

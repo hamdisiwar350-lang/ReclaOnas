@@ -16,7 +16,7 @@
             <a class="navbar-brand" href="#"><i class="fa-solid fa-water me-2"></i>ONAS - Espace Citoyen</a>
             <div class="d-flex align-items-center">
                 <span class="text-white me-3">Bienvenue, <?= htmlspecialchars($_SESSION['nom_prenom'] ?? 'Citoyen') ?></span>
-                <a href="index.php?action=logout" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-right-from-bracket me-1"></i> Déconnexion</a>
+                <form action="index.php?action=logout" method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>"><button type="submit" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-right-from-bracket me-1"></i> Déconnexion</button></form>
             </div>
         </div>
     </nav>

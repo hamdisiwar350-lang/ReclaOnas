@@ -22,7 +22,18 @@ $action = $_GET['action'] ?? 'accueil';
 if ($action === 'accueil') require_once 'views/accueil.php';
 elseif ($action === 'inscription_citoyen') (new CitoyenController())->inscriptionAction();
 elseif ($action === 'login_citoyen') (new CitoyenController())->loginAction();
-elseif ($action === 'logout') { session_unset(); session_destroy(); header("Location: index.php?action=accueil"); exit(); }
+elseif ($action === 'logout') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        header('Allow: POST');
+        exit('Méthode non autorisée.');
+    }
+    verifyCsrfToken();
+    session_unset();
+    session_destroy();
+    header("Location: index.php?action=accueil");
+    exit();
+}
 elseif ($action === 'login_employer') loginEmployerForm();
 elseif ($action === 'auth_employer') loginEmployerAction();
 elseif ($action === 'dashboard_admin' || $action === 'dashboard_employer') afficherDashboardEmployer();
