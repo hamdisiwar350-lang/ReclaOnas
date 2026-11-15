@@ -30,7 +30,10 @@ function gererAjout() {
             if (file_put_contents($dossier_upload . $nom_fichier, $imageData) === false) { http_response_code(500); exit('Échec de l’enregistrement de l’image.'); }
             $photo_path = 'uploads/' . $nom_fichier;
         }
-        ajouterReclamationBDD((int)$_SESSION['id_citoyen'], $type, $repere, $photo_path, $latitude, $longitude, $priorite);
+        if (!ajouterReclamationBDD((int)$_SESSION['id_citoyen'], $type, $repere, $photo_path, $latitude, $longitude, $priorite)) {
+            http_response_code(500);
+            exit('Impossible d’enregistrer la réclamation.');
+        }
         header('Location: index.php?action=afficher'); exit;
     }
     require_once 'views/ajouter_reclamation.php';
@@ -47,11 +50,19 @@ function updateReclamationAction(int $id) {
     requireAdminReclamationAccess(); if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Méthode non autorisée.'); } verifyCsrfToken();
     $typesAutorises = ['Bouchon sur réseau', 'Bouchon sur branchement et retour des eaux', 'Affaissement, casse du réseau', 'Odeurs', 'Débordements d\'eau usées', 'Autres'];
     $type = trim(postString('type') ?? ''); $repere = trim(postString('repere') ?? ''); if (!in_array($type, $typesAutorises, true) || $repere === '' || strlen($repere) > 500) { http_response_code(400); exit('Données invalides.'); }
-    updateReclamation($id, $type, $repere); header("Location: index.php?action=dashboard_admin"); exit;
+    if (!updateReclamation($id, $type, $repere)) {
+        http_response_code(500);
+        exit('Impossible de modifier la réclamation.');
+    }
+    header("Location: index.php?action=dashboard_admin"); exit;
 }
 
 function supprimerReclamationAction(int $id) {
     requireAdminReclamationAccess(); if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Méthode non autorisée.'); } verifyCsrfToken();
-    supprimerReclamation($id); header("Location: index.php?action=dashboard_admin"); exit;
+    if (!supprimerReclamation($id)) {
+        http_response_code(500);
+        exit('Impossible de supprimer la réclamation.');
+    }
+    header("Location: index.php?action=dashboard_admin"); exit;
 }
 ?>

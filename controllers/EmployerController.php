@@ -31,7 +31,10 @@ function updateStatutAction() {
         exit('Accès refusé.');
     }
 
-    updateStatutReclamation($id_reclamation, $nouveau_statut);
+    if (!updateStatutReclamation($id_reclamation, $nouveau_statut)) {
+        http_response_code(500);
+        exit('Impossible de mettre à jour le statut.');
+    }
     header("Location: index.php?action=dashboard_employer");
     exit;
 }
@@ -92,7 +95,10 @@ function affecterAction() {
         exit;
     }
 
-    affecterReclamationAdmin($id_reclamation, $id_equipe);
+    if (!affecterReclamationAdmin($id_reclamation, $id_equipe)) {
+        http_response_code(409);
+        exit('Affectation impossible.');
+    }
     header("Location: index.php?action=dashboard_admin");
     exit;
 }
@@ -154,7 +160,10 @@ function marquerTermineeAction() {
         $photo_intervention = 'uploads/' . $nom_fichier;
     }
 
-    validerIntervention($id_reclamation, $rapport, $photo_intervention);
+    if (!validerIntervention($id_reclamation, $rapport, $photo_intervention)) {
+        http_response_code(500);
+        exit('Impossible d’enregistrer l’intervention.');
+    }
     header("Location: index.php?action=dashboard_employer");
     exit;
 }

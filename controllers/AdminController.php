@@ -26,14 +26,20 @@ class AdminController {
 
     public function bloquerCitoyen($id) {
         $this->requirePost();
-        $this->model->updateCitoyenEtat((int) $id, 'bloque');
+        if (!$this->model->updateCitoyenEtat((int) $id, 'bloque')) {
+            http_response_code(500);
+            exit('Impossible de modifier l’état du citoyen.');
+        }
         header('Location: index.php?action=liste_citoyens');
         exit();
     }
 
     public function debloquerCitoyen($id) {
         $this->requirePost();
-        $this->model->updateCitoyenEtat((int) $id, 'actif');
+        if (!$this->model->updateCitoyenEtat((int) $id, 'actif')) {
+            http_response_code(500);
+            exit('Impossible de modifier l’état du citoyen.');
+        }
         header('Location: index.php?action=liste_citoyens');
         exit();
     }
@@ -88,7 +94,10 @@ class AdminController {
 
     public function supprimerChefEquipeAction($id) {
         $this->requirePost();
-        $this->model->supprimerChefEquipe((int) $id);
+        if (!$this->model->supprimerChefEquipe((int) $id)) {
+            http_response_code(500);
+            exit('Impossible de supprimer cette équipe.');
+        }
         header('Location: index.php?action=gestion_equipe');
         exit();
     }
