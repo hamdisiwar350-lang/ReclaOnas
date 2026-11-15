@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title">
+  <title>ONAS</title>
+  <rect width="192" height="192" rx="32" fill="#198754"/>
+  <path d="M96 28C82 53 53 82 53 113a43 43 0 0 0 86 0c0-31-29-60-43-85Z" fill="#fff"/>
+  <path d="M72 119c4 13 14 20 29 20" fill="none" stroke="#198754" stroke-linecap="round" stroke-width="8"/>
+</svg>

@@ -31,6 +31,7 @@
                     <div class="d-flex justify-content-center gap-3">
                         <a href="index.php?action=ajouter" class="btn btn-success"><i class="fa-solid fa-plus me-2"></i> Ajouter une Réclamation</a>
                         <a href="index.php?action=afficher" class="btn btn-outline-success"><i class="fa-solid fa-list me-2"></i> Mes Réclamations</a>
+                        <button type="button" class="btn btn-outline-secondary" id="enable-notifications">Activer les notifications</button>
                     </div>
                 </div>
             </div>
@@ -46,7 +47,12 @@
                 .catch((err) => console.log('Service Worker Failed', err));
         }
 
-        // Les notifications sont déclenchées uniquement après une action utilisateur.
+        const notificationStatuses = <?= json_encode(
+            array_column($reclamations ?? [], 'statut', 'id_reclamation'),
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        ) ?>;
+        const notificationStorageKey = 'onas-notification-statuses-<?= (int) ($_SESSION['id_citoyen'] ?? 0) ?>';
+
         function showNotification(titre, message) {
             if ('Notification' in window && Notification.permission === 'granted') {
                 navigator.serviceWorker.ready.then(function(registration) {
@@ -58,6 +64,25 @@
                 });
             }
         }
+
+        document.getElementById('enable-notifications').addEventListener('click', function() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        this.textContent = 'Notifications activées';
+                        this.disabled = true;
+                    }
+                }.bind(this));
+            }
+        });
+
+        const previousStatuses = JSON.parse(localStorage.getItem(notificationStorageKey) || '{}');
+        Object.entries(notificationStatuses).forEach(function([id, status]) {
+            if (previousStatuses[id] && previousStatuses[id] !== status) {
+                showNotification('Réclamation mise à jour', 'La réclamation #' + id + ' est maintenant : ' + status);
+            }
+        });
+        localStorage.setItem(notificationStorageKey, JSON.stringify(notificationStatuses));
     </script>
 </body>
 </html>

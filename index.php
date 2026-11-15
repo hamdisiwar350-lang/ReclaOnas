@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/config/security.php';
+set_exception_handler(static function (Throwable $exception): void {
+    error_log($exception->getMessage());
+    http_response_code(500);
+    exit('Une erreur interne est survenue.');
+});
 
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');

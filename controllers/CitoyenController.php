@@ -39,11 +39,13 @@ class CitoyenController {
     public function loginAction() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verifyCsrfToken();
+            enforceLoginRateLimit('citoyen');
             $cin = trim(postString('cin') ?? '');
             $password = postString('password') ?? '';
             $citoyen = $this->model->getCitoyenByCin($cin);
 
             if ($citoyen && ($citoyen['etat'] ?? 'actif') !== 'bloque' && password_verify($password, $citoyen['password'])) {
+                clearLoginFailures('citoyen');
                 session_regenerate_id(true);
                 $_SESSION['id_citoyen'] = $citoyen['id_citoyen'];
                 $_SESSION['nom_prenom'] = $citoyen['nom_prenom'];
@@ -52,6 +54,7 @@ class CitoyenController {
                 exit();
             }
 
+            recordLoginFailure('citoyen');
             $erreur = ($citoyen && ($citoyen['etat'] ?? '') === 'bloque') ? "Votre compte est bloqué." : "Numéro de CIN ou mot de passe incorrect.";
             require_once 'views/login_citoyen.php';
             return;
@@ -65,6 +68,7 @@ class CitoyenController {
             header("Location: index.php?action=login_citoyen");
             exit();
         }
+        $reclamations = getReclamationsParCitoyen((int) $_SESSION['id_citoyen']);
         require_once 'views/dashboard_citoyen.php';
     }
 }

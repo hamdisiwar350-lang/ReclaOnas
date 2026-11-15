@@ -45,11 +45,13 @@ function loginEmployerAction() {
         exit;
     }
     verifyCsrfToken();
+    enforceLoginRateLimit('employer');
 
     $matricule = trim(postString('matricule') ?? '');
     $password = postString('password') ?? '';
     $employer = getEmployerByMatricule($matricule);
     if ($employer && password_verify($password, $employer['password']) && in_array(strtolower($employer['role']), ['admin', 'equipe'], true)) {
+        clearLoginFailures('employer');
         session_regenerate_id(true);
         $_SESSION['id_employer'] = (int) $employer['id_employer'];
         $_SESSION['role'] = strtolower($employer['role']);
@@ -58,6 +60,7 @@ function loginEmployerAction() {
         exit;
     }
 
+    recordLoginFailure('employer');
     $erreur = "Matricule ou mot de passe incorrect.";
     require_once 'views/login_employer.php';
 }

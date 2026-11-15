@@ -20,6 +20,32 @@ function queryInt(string $key): ?int {
     return (int) $value;
 }
 
+function enforceLoginRateLimit(string $scope): void {
+    $key = 'login_attempts_' . $scope;
+    $attempts = $_SESSION[$key] ?? [];
+    $now = time();
+    $_SESSION[$key] = array_values(array_filter(
+        is_array($attempts) ? $attempts : [],
+        static fn($timestamp): bool => is_int($timestamp) && $timestamp > $now - 900
+    ));
+    if (count($_SESSION[$key]) >= 5) {
+        http_response_code(429);
+        exit('Trop de tentatives. Réessayez dans quelques minutes.');
+    }
+}
+
+function recordLoginFailure(string $scope): void {
+    $key = 'login_attempts_' . $scope;
+    if (!isset($_SESSION[$key]) || !is_array($_SESSION[$key])) {
+        $_SESSION[$key] = [];
+    }
+    $_SESSION[$key][] = time();
+}
+
+function clearLoginFailures(string $scope): void {
+    unset($_SESSION['login_attempts_' . $scope]);
+}
+
 function csrfToken(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
