@@ -1,48 +1,33 @@
 <?php
-if (!function_exists('getPdoConnection')) {
-    function getPdoConnection(): PDO
-    {
-        throw new RuntimeException('getPdoConnection() is not defined.');
+require_once __DIR__ . '/../config/database.php';
+
+function getEmployerByMatricule(string $matricule): ?array {
+    $stmt = getPdoConnection()->prepare('SELECT * FROM employer_onas WHERE matricule = :matricule LIMIT 1');
+    $stmt->execute([':matricule' => trim($matricule)]);
+    $employer = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $employer ?: null;
+}
+
+function updateStatutReclamation(int $id, string $statut): bool {
+    $statutsAutorises = ['En attente', 'En cours', 'Terminée', 'Traité'];
+    if (!in_array($statut, $statutsAutorises, true)) {
+        throw new InvalidArgumentException('Statut invalide.');
     }
-}
-
-function getEmployerByMatricule($matricule) {
-    $pdo = getPdoConnection();
-    $stmt = $pdo->prepare("SELECT * FROM employer_onas WHERE matricule = :matricule");
-    $stmt->execute([':matricule' => $matricule]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-function updateStatutReclamation(int $id, string $statut) {
-    $pdo = getPdoConnection();
-    $sql = "UPDATE reclamation SET statut = :statut WHERE id_reclamation = :id";
-    $stmt = $pdo->prepare($sql);
+    $stmt = getPdoConnection()->prepare('UPDATE reclamation SET statut = :statut WHERE id_reclamation = :id');
     return $stmt->execute([':statut' => $statut, ':id' => $id]);
 }
 
-function getToutesLesChefEquipes() {
-    $pdo = getPdoConnection();
-    $sql = "SELECT * FROM employer_onas WHERE role = 'equipe'";
-    $stmt = $pdo->query($sql);
+function getToutesLesChefEquipes(): array {
+    $stmt = getPdoConnection()->query("SELECT * FROM employer_onas WHERE role = 'equipe' ORDER BY id_employer DESC");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// 🆕 دالة جديدة لإنهاء الشكاية وتسجيل التقرير (نظيفة وفي بلاصتها)
-// دالة إنهاء الشكاية وتحديث الجدول مباشرة
-function validerIntervention($id_reclamation, $rapport, $photo_intervention) {
-    $pdo = getPdoConnection();
-    
-    $sql = "UPDATE reclamation 
-            SET statut = 'Terminée', 
-                rapport = :rapport, 
-                photo_intervention = :photo 
-            WHERE id_reclamation = :id";
-            
-    $stmt = $pdo->prepare($sql);
-    return $stmt->execute([
-        ':rapport' => $rapport,
-        ':photo'   => $photo_intervention,
-        ':id'      => $id_reclamation
-    ]);
+function validerIntervention(int $id_reclamation, string $rapport, ?string $photo_intervention): bool {
+    if ($rapport === '') {
+        throw new InvalidArgumentException('Le rapport est obligatoire.');
+    }
+    $sql = "UPDATE reclamation SET statut = 'Terminée', rapport = :rapport, photo_intervention = :photo WHERE id_reclamation = :id";
+    $stmt = getPdoConnection()->prepare($sql);
+    return $stmt->execute([':rapport' => $rapport, ':photo' => $photo_intervention, ':id' => $id_reclamation]);
 }
 ?>
