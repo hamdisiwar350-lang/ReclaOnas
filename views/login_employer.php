@@ -46,6 +46,7 @@
                     </div>
 
                     <form action="index.php?action=auth_employer" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
                         
                         <?php if (isset($erreur)): ?>
                             <div class="alert alert-danger text-center" role="alert">

@@ -41,6 +41,7 @@ function loginEmployerAction() {
         header("Location: index.php?action=login_employer");
         exit;
     }
+    verifyCsrfToken();
 
     $matricule = trim($_POST['matricule'] ?? '');
     $password = $_POST['password'] ?? '';

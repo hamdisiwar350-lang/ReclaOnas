@@ -38,6 +38,7 @@ class CitoyenController {
 
     public function loginAction() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            verifyCsrfToken();
             $cin = trim($_POST['cin'] ?? '');
             $password = $_POST['password'] ?? '';
             $citoyen = $this->model->getCitoyenByCin($cin);
