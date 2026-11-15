@@ -15,6 +15,12 @@ function affecterReclamationAdmin(int $id_reclamation, int $id_equipe) {
     $sql = "UPDATE reclamation SET affecte_a = :id_equipe, statut = 'En cours' WHERE id_reclamation = :id AND EXISTS (SELECT 1 FROM employer_onas WHERE id_employer = :id_equipe_check AND role = 'equipe')";
     $stmt = getPdoConnection()->prepare($sql);
     $stmt->execute([':id_equipe'=>$id_equipe, ':id'=>$id_reclamation, ':id_equipe_check'=>$id_equipe]);
-    return $stmt->rowCount() > 0;
+    if ($stmt->rowCount() > 0) {
+        return true;
+    }
+
+    $check = getPdoConnection()->prepare('SELECT 1 FROM reclamation WHERE id_reclamation = :id AND TRIM(affecte_a) = :id_equipe LIMIT 1');
+    $check->execute([':id' => $id_reclamation, ':id_equipe' => (string) $id_equipe]);
+    return (bool) $check->fetchColumn();
 }
 ?>
