@@ -58,6 +58,7 @@ class AdminController {
             header('Location: index.php?action=gestion_equipe');
             exit();
         }
+        verifyCsrfToken();
 
         $nom = trim($_POST['nom'] ?? '');
         $prenom = trim($_POST['prenom'] ?? '');
