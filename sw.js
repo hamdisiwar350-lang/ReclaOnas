@@ -15,10 +15,9 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
-// الاستجابة للإشعار وقت المواطن ينزل عليه
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     event.waitUntil(
-        clients.openWindow('index.php?action=dashboard_citoyen') // يهزو للداشبورد متاعو
+        clients.openWindow('index.php?action=dashboard_citoyen')
     );
 });

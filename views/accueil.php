@@ -64,17 +64,15 @@
 </head>
 <body>
 
-    <!-- Navbar (الشريط العلوي) -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
-                <i class="bi bi-droplet-fill fs-3 me-2"></i> <!-- قطرة ماء ترمز للـ ONAS -->
+                <i class="bi bi-droplet-fill fs-3 me-2"></i>
                 ONAS | e-Réclamations
             </a>
         </div>
     </nav>
 
-    <!-- المحتوى الرئيسي (Hero + Cards) -->
     <div class="container hero-section flex-grow-1">
         <div class="text-center mb-5">
             <h1 class="fw-bold text-dark mb-3">Bienvenue sur le portail d'assistance</h1>
@@ -83,7 +81,6 @@
 
         <div class="row justify-content-center g-4">
             
-            <!-- كارطة المواطن -->
             <div class="col-md-5 col-lg-4">
                 <div class="card card-custom h-100 p-4 text-center">
                     <div class="card-body d-flex flex-column">
@@ -92,7 +89,6 @@
                         </div>
                         <h4 class="fw-bold text-dark mb-3">Espace Citoyen</h4>
                         <p class="text-muted mb-4">Signalez un incident (fuite, refoulement...) et suivez l'avancement de votre dossier en temps réel.</p>
-                        <!-- البوطون هبطناها للوطة باش يجي المنظر متناسق -->
                         <div class="mt-auto">
                             <a href="index.php?action=login_citoyen" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold">
                                 Accéder <i class="bi bi-arrow-right ms-2"></i>
@@ -102,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- كارطة الإدارة / الفريق -->
             <div class="col-md-5 col-lg-4">
                 <div class="card card-custom h-100 p-4 text-center">
                     <div class="card-body d-flex flex-column">
@@ -123,7 +118,6 @@
         </div>
     </div>
 
-    <!-- Footer (الشريط السفلي) -->
     <footer class="footer py-3 text-center">
         <div class="container">
             <small class="text-muted fw-semibold">
